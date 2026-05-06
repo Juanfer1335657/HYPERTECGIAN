@@ -1,6 +1,7 @@
 "use server";
 
 import { getProducts, Product, Duration } from "@/lib/db";
+import { supabase } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 import { put } from "@vercel/blob";
 
@@ -55,35 +56,45 @@ export async function updateProduct(id: string, formData: FormData) {
   const duration = formData.get("duration") as Duration;
 
   const products = await getProducts();
-  const index = products.findIndex((p) => p.id === id);
-  if (index === -1) throw new Error("Product not found");
+  const currentProduct = products.find((p) => p.id === id);
+  if (!currentProduct) throw new Error("Product not found");
 
-  const uploadedURL = await handleFileUpload(imageFile);
-  let finalImage = products[index].image;
-  if (uploadedURL) {
-    finalImage = uploadedURL;
+  let finalImage = currentProduct.image;
+  if (imageFile && imageFile.size > 0) {
+    const blob = await put(imageFile.name, imageFile, { access: "public" });
+    finalImage = blob.url;
   } else if (imageURL) {
     finalImage = imageURL;
   }
 
-  products[index] = {
-    ...products[index],
-    title: title || products[index].title,
-    image: finalImage,
-    priceUSD: isNaN(priceUSD) ? products[index].priceUSD : priceUSD,
-    priceCOP: isNaN(priceCOP) ? products[index].priceCOP : priceCOP,
-    duration: duration || products[index].duration,
-  };
+  const { error } = await supabase
+    .from("products")
+    .update({
+      title: title || currentProduct.title,
+      image: finalImage,
+      priceUSD: isNaN(priceUSD) ? currentProduct.priceUSD : priceUSD,
+      priceCOP: isNaN(priceCOP) ? currentProduct.priceCOP : priceCOP,
+      duration: duration || currentProduct.duration,
+    })
+    .eq("id", id);
 
-  await saveProducts(products);
+  if (error) {
+    console.error("Error updating product:", error);
+    throw new Error("Failed to update product");
+  }
+
   revalidatePath("/shop");
   revalidatePath("/admin");
 }
 
 export async function deleteProduct(id: string) {
-  const products = await getProducts();
-  const filtered = products.filter((p) => p.id !== id);
-  await saveProducts(filtered);
+  const { error } = await supabase.from("products").delete().eq("id", id);
+
+  if (error) {
+    console.error("Error deleting product:", error);
+    throw new Error("Failed to delete product");
+  }
+
   revalidatePath("/shop");
   revalidatePath("/admin");
 }
