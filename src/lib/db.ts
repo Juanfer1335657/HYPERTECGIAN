@@ -15,8 +15,7 @@ export interface Product {
 export async function getProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from("products")
-    .select("*")
-    .order("createdAt", { ascending: false });
+    .select("*");
   
   if (error) {
     console.error("Error fetching products:", error);

@@ -3,11 +3,14 @@ import Navbar from "@/components/Navbar";
 import ProductGrid from "@/components/ProductGrid";
 import FloatingCart from "@/components/FloatingCart";
 import VideoBackground from "@/components/VideoBackground";
+import { unstable_noStore } from "next/cache";
 
 export const dynamic = 'force-dynamic';
 
 export default async function ShopPage() {
+  unstable_noStore();
   const products = await getProducts();
+  console.log("Products fetched:", products.length);
 
   return (
     <div className="min-h-screen relative">

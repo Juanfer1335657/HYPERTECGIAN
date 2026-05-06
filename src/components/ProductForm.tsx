@@ -43,7 +43,6 @@ export default function ProductForm({ product }: ProductFormProps) {
 
   async function handleSubmit(formData: FormData) {
     setIsPending(true);
-    // Explicitly add selected duration to formData just in case local state is used for the custom UI
     formData.set("duration", selectedDuration);
     
     try {
@@ -57,7 +56,8 @@ export default function ProductForm({ product }: ProductFormProps) {
       router.push("/admin");
       router.refresh();
     } catch (err) {
-      toast.error("Error al procesar la solicitud");
+      const message = err instanceof Error ? err.message : "Error desconocido";
+      toast.error("Error: " + message);
     } finally {
       setIsPending(false);
     }
