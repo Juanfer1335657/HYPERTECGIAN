@@ -39,8 +39,8 @@ export async function createProduct(formData: FormData) {
   const { error } = await supabase.from("products").insert([newProduct]);
   
   if (error) {
-    console.error("Error creating product:", error);
-    throw new Error("Failed to create product");
+    console.error("Error creating product:", JSON.stringify(error));
+    throw new Error(error.message);
   }
 
   revalidatePath("/shop");

@@ -9,7 +9,7 @@ export interface Product {
   priceUSD: number;
   priceCOP: number;
   duration: Duration;
-  createdAt: number;
+  createdAt: string;
 }
 
 export async function getProducts(): Promise<Product[]> {
