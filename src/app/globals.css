@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #3B82F6;
+  --color-primary-dark: #1D4ED8;
+  --color-secondary: #0F172A;
+  --color-accent: #6366F1;
+  --color-background: #F8F9FA;
+  --color-foreground: #1A1A1A;
+  --color-muted: #64748B;
+  
+  --radius-xl: 0.75rem;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-200 tracking-tight;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@utility tech-card {
+  @apply bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl transition-all duration-300 hover:shadow-blue-500/10 hover:border-white/20 hover:bg-black/50 hover:-translate-y-1;
+}
+
+@utility tech-button {
+  @apply inline-flex items-center justify-center px-6 py-2.5 rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+@utility btn-primary {
+  @apply tech-button bg-secondary text-white hover:bg-slate-800 active:scale-[0.98];
+}
+
+@utility btn-outline {
+  @apply tech-button border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300;
+}
+
+@utility btn-accent {
+  @apply tech-button bg-primary text-white hover:bg-primary-dark shadow-sm shadow-blue-200;
+}
+
+
