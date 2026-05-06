@@ -28,7 +28,7 @@ export async function createProduct(formData: FormData) {
     finalImage = imageURL;
   }
 
-  const newProduct: Omit<Product, "id" | "createdAt"> = {
+  const newProduct = {
     title,
     image: finalImage,
     priceUSD,
@@ -36,7 +36,11 @@ export async function createProduct(formData: FormData) {
     duration,
   };
 
-  const { error } = await supabase.from("products").insert([newProduct]);
+  console.log("Inserting product:", JSON.stringify(newProduct));
+  
+  const { error, data } = await supabase.from("products").insert([newProduct]).select();
+  
+  console.log("Insert result:", { error, data });
   
   if (error) {
     console.error("Error creating product:", JSON.stringify(error));
@@ -85,6 +89,11 @@ export async function updateProduct(id: string, formData: FormData) {
 
   revalidatePath("/shop");
   revalidatePath("/admin");
+}
+
+export async function testConnection() {
+  const { data, error } = await supabase.from("products").select("count").range(0, 0);
+  return { data, error };
 }
 
 export async function deleteProduct(id: string) {
