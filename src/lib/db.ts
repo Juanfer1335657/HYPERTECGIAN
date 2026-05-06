@@ -12,23 +12,11 @@ export interface Product {
   createdAt: string;
 }
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-console.log("SUPABASE_URL:", supabaseUrl);
-console.log("SUPABASE_KEY exists:", !!supabaseKey);
-
-const supabase = createClient(supabaseUrl || "", supabaseKey || "");
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function getProducts(): Promise<Product[]> {
-  const { data, error } = await supabase
-    .from("products")
-    .select("*");
-  
-  if (error) {
-    console.log("Supabase error:", error.message);
-    return [];
-  }
-  
+  const { data } = await supabase.from("products").select("*");
   return data || [];
 }
