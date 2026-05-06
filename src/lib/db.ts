@@ -13,17 +13,13 @@ export interface Product {
 }
 
 export async function getProducts(): Promise<Product[]> {
-  console.log("Fetching products from:", process.env.NEXT_PUBLIC_SUPABASE_URL);
-  
   const { data, error } = await supabase
     .from("products")
     .select("*");
   
   if (error) {
-    console.error("Error fetching products:", error);
     return [];
   }
   
-  console.log("Products found:", data?.length || 0);
   return data || [];
 }
