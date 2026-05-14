@@ -1,8 +1,8 @@
 "use server";
 
-import { getProducts, Product, Duration } from "@/lib/db";
-import { supabase } from "@/lib/supabase";
+import { getSql } from "@/lib/neon";
 import { revalidatePath } from "next/cache";
+import { Duration } from "@/lib/db";
 
 let _blob: any = null;
 async function getBlob() {
@@ -14,7 +14,6 @@ async function getBlob() {
 }
 
 export async function createProduct(formData: FormData) {
-  console.log("=== DEBUG createProduct ===");
   const title = formData.get("title") as string;
   const imageURL = formData.get("imageURL") as string;
   const imageFile = formData.get("imageFile") as File;
@@ -22,59 +21,38 @@ export async function createProduct(formData: FormData) {
   const priceCOP = parseFloat(formData.get("priceCOP") as string);
   const duration = formData.get("duration") as Duration;
 
-  console.log("title:", title);
-  console.log("imageURL:", imageURL);
-  console.log("imageFile:", imageFile?.name, imageFile?.size);
-  console.log("priceUSD:", priceUSD);
-  console.log("priceCOP:", priceCOP);
-  console.log("duration:", duration);
-
   if (!title || isNaN(priceUSD) || isNaN(priceCOP) || !duration) {
-    const msg = `Faltan campos requeridos: title="${title}", priceUSD=${priceUSD}, priceCOP=${priceCOP}, duration="${duration}"`;
-    console.error(msg);
-    throw new Error(msg);
+    throw new Error("Faltan campos requeridos");
   }
 
   let finalImage = "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&q=80&w=600";
   
   try {
     if (imageFile && imageFile.size > 0) {
-      console.log("Subiendo imagen a Vercel Blob...");
       const put = await getBlob();
       const blob = await put(imageFile.name, imageFile, { access: "public" });
       finalImage = blob.url;
-      console.log("Imagen subida:", finalImage);
     } else if (imageURL) {
       finalImage = imageURL;
-      console.log("Usando URL de imagen:", finalImage);
     }
   } catch (blobError) {
-    console.error("Error al subir imagen:", blobError);
     if (imageURL) {
       finalImage = imageURL;
     }
   }
 
-  const newProduct = {
-    title,
-    image: finalImage,
-    priceUSD,
-    priceCOP,
-    duration,
-  };
+  const sql = getSql();
+  const [result] = await sql.query(
+    `INSERT INTO products (title, image, price_usd, price_cop, duration) 
+     VALUES ($1, $2, $3, $4, $5) 
+     RETURNING *`,
+    [title, finalImage, priceUSD, priceCOP, duration]
+  );
 
-  console.log("Insertando producto:", JSON.stringify(newProduct));
-  
-  const { error, data } = await supabase.from("products").insert([newProduct]).select();
-  
-  console.log("Resultado insert:", { error, data });
-  
-  if (error) {
-    console.error("Error creando producto:", JSON.stringify(error));
-    throw new Error(error.message);
+  if (!result) {
+    throw new Error("No se pudo crear el producto");
   }
 
-  console.log("Producto creado exitosamente!");
   revalidatePath("/shop");
   revalidatePath("/admin");
 }
@@ -92,46 +70,48 @@ export async function updateProduct(id: string, formData: FormData) {
   if (!currentProduct) throw new Error("Product not found");
 
   let finalImage = currentProduct.image;
-  if (imageFile && imageFile.size > 0) {
-    const blob = await put(imageFile.name, imageFile, { access: "public" });
-    finalImage = blob.url;
-  } else if (imageURL) {
-    finalImage = imageURL;
+  try {
+    if (imageFile && imageFile.size > 0) {
+      const put = await getBlob();
+      const blob = await put(imageFile.name, imageFile, { access: "public" });
+      finalImage = blob.url;
+    } else if (imageURL) {
+      finalImage = imageURL;
+    }
+  } catch (e) {
+    console.error("Error al actualizar imagen:", e);
   }
 
-  const { error } = await supabase
-    .from("products")
-    .update({
-      title: title || currentProduct.title,
-      image: finalImage,
-      priceUSD: isNaN(priceUSD) ? currentProduct.priceUSD : priceUSD,
-      priceCOP: isNaN(priceCOP) ? currentProduct.priceCOP : priceCOP,
-      duration: duration || currentProduct.duration,
-    })
-    .eq("id", id);
-
-  if (error) {
-    console.error("Error updating product:", error);
-    throw new Error("Failed to update product");
-  }
+  const sql = getSql();
+  await sql.query(
+    `UPDATE products SET title = $1, image = $2, price_usd = $3, price_cop = $4, duration = $5 WHERE id = $6`,
+    [
+      title || currentProduct.title,
+      finalImage,
+      isNaN(priceUSD) ? currentProduct.priceUSD : priceUSD,
+      isNaN(priceCOP) ? currentProduct.priceCOP : priceCOP,
+      duration || currentProduct.duration,
+      id
+    ]
+  );
 
   revalidatePath("/shop");
   revalidatePath("/admin");
 }
 
 export async function testConnection() {
-  const { data, error } = await supabase.from("products").select("count").range(0, 0);
-  return { data, error };
+  const sql = getSql();
+  try {
+    const result = await sql.query("SELECT COUNT(*) as count FROM products", []);
+    return { data: result, error: null };
+  } catch (e) {
+    return { data: null, error: e };
+  }
 }
 
 export async function deleteProduct(id: string) {
-  const { error } = await supabase.from("products").delete().eq("id", id);
-
-  if (error) {
-    console.error("Error deleting product:", error);
-    throw new Error("Failed to delete product");
-  }
-
+  const sql = getSql();
+  await sql.query("DELETE FROM products WHERE id = $1", [id]);
   revalidatePath("/shop");
   revalidatePath("/admin");
 }
