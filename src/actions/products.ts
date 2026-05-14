@@ -3,17 +3,18 @@
 import { getProducts, Product, Duration } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
-import { put } from "@vercel/blob";
+
+let _blob: any = null;
+async function getBlob() {
+  if (!_blob) {
+    const { put: blobPut } = await import("@vercel/blob");
+    _blob = blobPut;
+  }
+  return _blob;
+}
 
 export async function createProduct(formData: FormData) {
   console.log("=== DEBUG createProduct ===");
-  console.log("title:", formData.get("title"));
-  console.log("imageURL:", formData.get("imageURL"));
-  console.log("imageFile:", formData.get("imageFile"));
-  console.log("priceUSD:", formData.get("priceUSD"));
-  console.log("priceCOP:", formData.get("priceCOP"));
-  console.log("duration:", formData.get("duration"));
-
   const title = formData.get("title") as string;
   const imageURL = formData.get("imageURL") as string;
   const imageFile = formData.get("imageFile") as File;
@@ -21,19 +22,37 @@ export async function createProduct(formData: FormData) {
   const priceCOP = parseFloat(formData.get("priceCOP") as string);
   const duration = formData.get("duration") as Duration;
 
-  if (!title || !priceUSD || !priceCOP || !duration) {
-    throw new Error("Faltan campos requeridos. title=" + title + ", priceUSD=" + priceUSD + ", priceCOP=" + priceCOP + ", duration=" + duration);
+  console.log("title:", title);
+  console.log("imageURL:", imageURL);
+  console.log("imageFile:", imageFile?.name, imageFile?.size);
+  console.log("priceUSD:", priceUSD);
+  console.log("priceCOP:", priceCOP);
+  console.log("duration:", duration);
+
+  if (!title || isNaN(priceUSD) || isNaN(priceCOP) || !duration) {
+    const msg = `Faltan campos requeridos: title="${title}", priceUSD=${priceUSD}, priceCOP=${priceCOP}, duration="${duration}"`;
+    console.error(msg);
+    throw new Error(msg);
   }
 
   let finalImage = "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&q=80&w=600";
   
-  if (imageFile && imageFile.size > 0) {
-    const blob = await put(imageFile.name, imageFile, {
-      access: "public",
-    });
-    finalImage = blob.url;
-  } else if (imageURL) {
-    finalImage = imageURL;
+  try {
+    if (imageFile && imageFile.size > 0) {
+      console.log("Subiendo imagen a Vercel Blob...");
+      const put = await getBlob();
+      const blob = await put(imageFile.name, imageFile, { access: "public" });
+      finalImage = blob.url;
+      console.log("Imagen subida:", finalImage);
+    } else if (imageURL) {
+      finalImage = imageURL;
+      console.log("Usando URL de imagen:", finalImage);
+    }
+  } catch (blobError) {
+    console.error("Error al subir imagen:", blobError);
+    if (imageURL) {
+      finalImage = imageURL;
+    }
   }
 
   const newProduct = {
@@ -44,17 +63,18 @@ export async function createProduct(formData: FormData) {
     duration,
   };
 
-  console.log("Inserting product:", JSON.stringify(newProduct));
+  console.log("Insertando producto:", JSON.stringify(newProduct));
   
   const { error, data } = await supabase.from("products").insert([newProduct]).select();
   
-  console.log("Insert result:", { error, data });
+  console.log("Resultado insert:", { error, data });
   
   if (error) {
-    console.error("Error creating product:", JSON.stringify(error));
+    console.error("Error creando producto:", JSON.stringify(error));
     throw new Error(error.message);
   }
 
+  console.log("Producto creado exitosamente!");
   revalidatePath("/shop");
   revalidatePath("/admin");
 }

@@ -13,11 +13,15 @@ export interface Product {
 }
 
 export async function getProducts(): Promise<Product[]> {
+  console.log("=== getProducts() llamado ===");
   try {
     const sql = getSql();
+    console.log("Conexión SQL obtained");
     try {
       await sql("SELECT 1 FROM products LIMIT 1");
-    } catch {
+      console.log("Tabla products existe");
+    } catch (checkError) {
+      console.log("Tabla no existe, creando...", checkError);
       await sql(`
         CREATE TABLE IF NOT EXISTS products (
           id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -29,8 +33,10 @@ export async function getProducts(): Promise<Product[]> {
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
       `);
+      console.log("Tabla products creada");
     }
     const rows = await sql("SELECT * FROM products ORDER BY created_at DESC");
+    console.log("Productos obtenidos:", rows.length);
     return rows.map((row: Record<string, unknown>) => ({
       id: row.id as string,
       image: row.image as string,
@@ -41,7 +47,7 @@ export async function getProducts(): Promise<Product[]> {
       createdAt: row.created_at as string,
     }));
   } catch (e) {
-    console.error("Error getting products:", e);
+    console.error("=== ERROR en getProducts ===", e);
     return [];
   }
 }
