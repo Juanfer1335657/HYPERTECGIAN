@@ -2,7 +2,7 @@
 
 import { getSql } from "@/lib/neon";
 import { revalidatePath } from "next/cache";
-import { Duration } from "@/lib/db";
+import { Duration, getProducts } from "@/lib/db";
 
 let _blob: any = null;
 async function getBlob() {
@@ -67,7 +67,7 @@ export async function updateProduct(id: string, formData: FormData) {
 
   const products = await getProducts();
   const currentProduct = products.find((p) => p.id === id);
-  if (!currentProduct) throw new Error("Product not found");
+  if (!currentProduct) throw new Error("Producto no encontrado");
 
   let finalImage = currentProduct.image;
   try {
