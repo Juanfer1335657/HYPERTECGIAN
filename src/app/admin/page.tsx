@@ -1,4 +1,5 @@
-import { getSession, logout } from "@/actions/auth";
+import { getSession } from "@/lib/auth";
+import { logout } from "@/actions/auth";
 import { getProducts } from "@/lib/db";
 import { redirect } from "next/navigation";
 import Link from "next/link";

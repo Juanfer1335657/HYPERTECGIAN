@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { SignJWT, jwtVerify } from "jose";
+import { SignJWT } from "jose";
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@hypertecgian.com";
@@ -33,27 +33,8 @@ export async function login(formData: FormData) {
   return { success: false, error: "Credenciales inválidas" };
 }
 
-export async function verifyToken() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("admin-token")?.value;
-
-  if (!token) return null;
-
-  try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    return payload;
-  } catch {
-    return null;
-  }
-}
-
 export async function logout() {
   const cookieStore = await cookies();
   cookieStore.set("admin-token", "", { maxAge: 0, path: "/" });
   redirect("/admin/login");
-}
-
-export async function getSession() {
-  const payload = await verifyToken();
-  return payload !== null;
 }

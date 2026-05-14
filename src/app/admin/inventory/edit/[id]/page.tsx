@@ -2,7 +2,7 @@ import ProductForm from "@/components/ProductForm";
 import Navbar from "@/components/Navbar";
 import VideoBackground from "@/components/VideoBackground";
 import { getProducts } from "@/lib/db";
-import { getSession } from "@/actions/auth";
+import { getSession } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 
 interface EditProductPageProps {

@@ -1,7 +1,7 @@
 import ProductForm from "@/components/ProductForm";
 import Navbar from "@/components/Navbar";
 import VideoBackground from "@/components/VideoBackground";
-import { getSession } from "@/actions/auth";
+import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export default async function NewProductPage() {
