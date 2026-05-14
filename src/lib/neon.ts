@@ -12,10 +12,3 @@ export function getSql() {
   }
   return _sql;
 }
-
-export const sql = Object.assign(getSql(), {
-  query: async function(query: string, params: any[] = []) {
-    const sqlFn = getSql();
-    return sqlFn.query(query, params);
-  }
-});
