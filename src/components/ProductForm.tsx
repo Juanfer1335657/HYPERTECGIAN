@@ -87,8 +87,8 @@ export default function ProductForm({ product }: ProductFormProps) {
         )}
       </div>
 
-      <div className="bg-[#080808] rounded-[3rem] shadow-[0_0_100px_rgba(0,0,0,0.5)] border border-white/5 overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700">
-        <div className="p-12 border-b border-white/5 bg-gradient-to-r from-white/[0.03] to-transparent">
+      <div className="bg-[#080808] rounded-2xl md:rounded-[3rem] shadow-[0_0_100px_rgba(0,0,0,0.5)] border border-white/5 overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700">
+        <div className="p-6 md:p-12 border-b border-white/5 bg-gradient-to-r from-white/[0.03] to-transparent">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full mb-2">
@@ -112,7 +112,7 @@ export default function ProductForm({ product }: ProductFormProps) {
           </div>
         </div>
 
-        <form action={handleSubmit} className="p-12 space-y-12">
+        <form action={handleSubmit} className="p-6 md:p-12 space-y-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
             {/* Asset Configuration (Images) */}
             <div className="lg:col-span-5 space-y-8">

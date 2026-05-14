@@ -83,7 +83,7 @@ export default function InventoryCRUD({ products: initialProducts }: { products:
                     <td className="py-6 px-8">
                       <div className="flex items-center gap-5">
                         <div className="relative w-14 h-14 rounded-[1.2rem] overflow-hidden border border-white/10 p-1 bg-white/5 group-hover:border-blue-500/30 transition-colors">
-                          <img src={p.image} className="w-full h-full object-cover rounded-[0.9rem]" />
+                          <img src={p.image} alt={p.title} loading="lazy" className="w-full h-full object-cover rounded-[0.9rem]" />
                         </div>
                         <div className="space-y-1">
                           <span className="font-black text-white uppercase tracking-tight block">{p.title}</span>

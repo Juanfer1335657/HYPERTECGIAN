@@ -36,7 +36,7 @@ export default function Home() {
           >
             Premium Platform
           </motion.div>
-          <h1 className="text-6xl md:text-8xl font-bold tracking-tight text-white leading-[1.1]">
+          <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold tracking-tight text-white leading-[1.1]">
             Hyper<span className="text-blue-400">Tecgian</span>
           </h1>
           <p className="text-xl text-slate-200 max-w-xl mx-auto leading-relaxed font-light">

@@ -21,7 +21,8 @@ export default function AdminLoginPage() {
       const res = await login(formData);
       if (res.success) {
         toast.success("Bienvenido, Administrador");
-        window.location.href = "/admin";
+        router.replace("/admin");
+        router.refresh();
       } else {
         toast.error(res.error || "Credenciales incorrectas");
       }

@@ -71,7 +71,7 @@ export default function CartPage() {
         <div className="lg:col-span-7 space-y-4">
           {cart.map((item) => (
             <div key={item.id} className="flex gap-4 p-4 tech-card bg-black/40 border-white/10">
-              <img src={item.image} alt={item.title} className="w-20 h-20 object-cover rounded-lg bg-slate-900 border border-white/5" />
+              <img src={item.image} alt={item.title} loading="lazy" className="w-20 h-20 object-cover rounded-lg bg-slate-900 border border-white/5" />
               <div className="flex-grow space-y-1">
                 <div className="flex justify-between">
                   <h3 className="font-bold text-white text-lg">{item.title}</h3>

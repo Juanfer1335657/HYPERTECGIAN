@@ -6,6 +6,7 @@ import { Plus, Check, Clock, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useState, useMemo } from "react";
 
+
 export default function ProductGrid({ products }: { products: Product[] }) {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -67,6 +68,7 @@ function ProductCard({ product }: { product: Product }) {
         <img 
           src={product.image || "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&q=80&w=600"} 
           alt={product.title}
+          loading="lazy"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
         <div className="absolute top-4 left-4">
