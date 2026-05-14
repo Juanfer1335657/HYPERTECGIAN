@@ -30,7 +30,7 @@ export default function CartPage() {
       `Quedo atento a las instrucciones de pago. Muchas gracias!`;
 
     const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/573000000000?text=${encodedMessage}`, "_blank");
+    window.open(`https://wa.me/573015851969?text=${encodedMessage}`, "_blank");
     
     // Optional: Clear cart after checkout
     // clearCart();
