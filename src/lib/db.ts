@@ -18,11 +18,11 @@ export async function getProducts(): Promise<Product[]> {
     const sql = getSql();
     console.log("Conexión SQL obtained");
     try {
-      await sql("SELECT 1 FROM products LIMIT 1");
+      await sql.query("SELECT 1 FROM products LIMIT 1", []);
       console.log("Tabla products existe");
     } catch (checkError) {
       console.log("Tabla no existe, creando...", checkError);
-      await sql(`
+      await sql.query(`
         CREATE TABLE IF NOT EXISTS products (
           id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
           title TEXT NOT NULL,
@@ -32,10 +32,10 @@ export async function getProducts(): Promise<Product[]> {
           duration TEXT NOT NULL,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
-      `);
+      `, []);
       console.log("Tabla products creada");
     }
-    const rows = await sql("SELECT * FROM products ORDER BY created_at DESC");
+    const rows = await sql.query("SELECT * FROM products ORDER BY created_at DESC", []);
     console.log("Productos obtenidos:", rows.length);
     return rows.map((row: Record<string, unknown>) => ({
       id: row.id as string,
@@ -60,7 +60,7 @@ export async function createProduct(product: {
   duration: Duration;
 }): Promise<Product> {
   const sql = getSql();
-  const [row] = await sql(
+  const [row] = await sql.query(
     `INSERT INTO products (title, image, price_usd, price_cop, duration)
      VALUES ($1, $2, $3, $4, $5)
      RETURNING *`,
@@ -116,10 +116,10 @@ export async function updateProduct(
   if (sets.length === 0) return;
 
   values.push(id);
-  await sql(`UPDATE products SET ${sets.join(", ")} WHERE id = $${idx}`, ...values);
+  await sql.query(`UPDATE products SET ${sets.join(", ")} WHERE id = $${idx}`, values);
 }
 
 export async function deleteProduct(id: string): Promise<void> {
   const sql = getSql();
-  await sql("DELETE FROM products WHERE id = $1", [id]);
+  await sql.query("DELETE FROM products WHERE id = $1", [id]);
 }

@@ -12,20 +12,20 @@ export async function GET() {
     const sql = getSql();
     diagnostico.database.status = "conectado";
 
-    const tablas = await sql(`
+    const tablas = await sql.query(`
       SELECT table_name 
       FROM information_schema.tables 
       WHERE table_schema = 'public'
-    `);
+    `, []);
     diagnostico.database.tablas = tablas.map((t: any) => t.table_name);
 
     if (tablas.find((t: any) => t.table_name === "products")) {
       diagnostico.tablaProducts.existe = true;
-      const columnas = await sql(`
+      const columnas = await sql.query(`
         SELECT column_name, data_type 
         FROM information_schema.columns 
         WHERE table_name = 'products'
-      `);
+      `, []);
       diagnostico.tablaProducts.columnas = columnas;
     } else {
       diagnostico.tablaProducts.existe = false;

@@ -2,10 +2,10 @@ import { getSql } from "./neon";
 
 async function ensureTableExists(sql: any, tableName: string) {
   try {
-    await sql(`SELECT 1 FROM ${tableName} LIMIT 1`);
+    await sql.query(`SELECT 1 FROM ${tableName} LIMIT 1`, []);
   } catch {
     if (tableName === "products") {
-      await sql(`
+      await sql.query(`
         CREATE TABLE IF NOT EXISTS products (
           id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
           title TEXT NOT NULL,
@@ -15,7 +15,7 @@ async function ensureTableExists(sql: any, tableName: string) {
           duration TEXT NOT NULL,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
-      `);
+      `, []);
     }
   }
 }
@@ -29,7 +29,7 @@ export const supabase = {
           const sql = getSql();
           await ensureTableExists(sql, table);
           const cols = columns === "*" ? "*" : columns || "*";
-          const rows = await sql(`SELECT ${cols} FROM ${table}`);
+          const rows = await sql.query(`SELECT ${cols} FROM ${table}`, []);
           console.log(`Rows obtenidas de ${table}:`, rows.length);
           resolve({ data: rows, error: null });
         } catch (e) {
@@ -42,7 +42,7 @@ export const supabase = {
           try {
             const sql = getSql();
             await ensureTableExists(sql, table);
-            const rows = await sql(`SELECT * FROM ${table} LIMIT ${end - start + 1} OFFSET ${start}`);
+            const rows = await sql.query(`SELECT * FROM ${table} LIMIT ${end - start + 1} OFFSET ${start}`, []);
             resolve({ data: rows, error: null });
           } catch (e) {
             resolve({ data: [], error: e as Error });
@@ -62,9 +62,9 @@ export const supabase = {
             const vals = Object.keys(row).map((_, i) => `$${i + 1}`).join(", ");
             const values = Object.values(row);
             console.log("Valores a insertar:", values);
-            const [result] = await sql(
+            const [result] = await sql.query(
               `INSERT INTO ${table} (${cols}) VALUES (${vals}) RETURNING *`,
-              ...values
+              values
             );
             console.log("Resultado insert:", result);
             resolve({ data: [result], error: null });
@@ -83,7 +83,7 @@ export const supabase = {
             await ensureTableExists(sql, table);
             const sets = Object.keys(data).map((k, i) => `${k} = $${i + 1}`).join(", ");
             const values = [...Object.values(data), value];
-            await sql(`UPDATE ${table} SET ${sets} WHERE ${field} = $${values.length}`, ...values);
+            await sql.query(`UPDATE ${table} SET ${sets} WHERE ${field} = $${values.length}`, values);
             resolve({ error: null });
           } catch (e) {
             resolve({ error: e as Error });
@@ -97,7 +97,7 @@ export const supabase = {
           try {
             const sql = getSql();
             await ensureTableExists(sql, table);
-            await sql(`DELETE FROM ${table} WHERE ${field} = $1`, [value]);
+            await sql.query(`DELETE FROM ${table} WHERE ${field} = $1`, [value]);
             resolve({ error: null });
           } catch (e) {
             resolve({ error: e as Error });

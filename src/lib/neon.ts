@@ -1,8 +1,8 @@
-import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
+import { neon } from "@neondatabase/serverless";
 
-let _sql: NeonQueryFunction | null = null;
+let _sql: any = null;
 
-export function getSql(): NeonQueryFunction {
+export function getSql() {
   if (!_sql) {
     const databaseUrl = process.env.DATABASE_URL;
     if (!databaseUrl) {
@@ -16,6 +16,9 @@ export function getSql(): NeonQueryFunction {
   return _sql;
 }
 
-export function sql(...args: Parameters<NeonQueryFunction>) {
-  return getSql()(...args);
-}
+export const sql = Object.assign(getSql(), {
+  query: async function(query: string, params: any[] = []) {
+    const sqlFn = getSql();
+    return sqlFn.query(query, params);
+  }
+});

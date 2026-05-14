@@ -4,7 +4,7 @@ export async function GET() {
   const sql = getSql();
   
   try {
-    const result = await sql(`
+    const result = await sql.query(`
       CREATE TABLE IF NOT EXISTS products (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         title TEXT NOT NULL,
@@ -14,7 +14,7 @@ export async function GET() {
         duration TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
-    `);
+    `, []);
     
     return Response.json({ success: true, message: "Tabla creada o ya existente" });
   } catch (e) {
