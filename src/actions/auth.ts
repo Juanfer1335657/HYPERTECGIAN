@@ -4,9 +4,9 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { SignJWT, jwtVerify } from "jose";
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD!;
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL!;
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@hypertecgian.com";
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "super_secret_jwt_key_min_32_chars");
 
 export async function login(formData: FormData) {
   const email = formData.get("email");

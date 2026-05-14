@@ -15,6 +15,21 @@ export interface Product {
 export async function getProducts(): Promise<Product[]> {
   try {
     const sql = getSql();
+    try {
+      await sql("SELECT 1 FROM products LIMIT 1");
+    } catch {
+      await sql(`
+        CREATE TABLE IF NOT EXISTS products (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          title TEXT NOT NULL,
+          image TEXT NOT NULL,
+          price_usd DECIMAL(10, 2) NOT NULL,
+          price_cop BIGINT NOT NULL,
+          duration TEXT NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+    }
     const rows = await sql("SELECT * FROM products ORDER BY created_at DESC");
     return rows.map((row: Record<string, unknown>) => ({
       id: row.id as string,
@@ -26,7 +41,7 @@ export async function getProducts(): Promise<Product[]> {
       createdAt: row.created_at as string,
     }));
   } catch (e) {
-    console.error(e);
+    console.error("Error getting products:", e);
     return [];
   }
 }
