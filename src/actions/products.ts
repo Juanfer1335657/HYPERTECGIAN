@@ -6,6 +6,14 @@ import { revalidatePath } from "next/cache";
 import { put } from "@vercel/blob";
 
 export async function createProduct(formData: FormData) {
+  console.log("=== DEBUG createProduct ===");
+  console.log("title:", formData.get("title"));
+  console.log("imageURL:", formData.get("imageURL"));
+  console.log("imageFile:", formData.get("imageFile"));
+  console.log("priceUSD:", formData.get("priceUSD"));
+  console.log("priceCOP:", formData.get("priceCOP"));
+  console.log("duration:", formData.get("duration"));
+
   const title = formData.get("title") as string;
   const imageURL = formData.get("imageURL") as string;
   const imageFile = formData.get("imageFile") as File;
@@ -14,7 +22,7 @@ export async function createProduct(formData: FormData) {
   const duration = formData.get("duration") as Duration;
 
   if (!title || !priceUSD || !priceCOP || !duration) {
-    throw new Error("Missing required fields");
+    throw new Error("Faltan campos requeridos. title=" + title + ", priceUSD=" + priceUSD + ", priceCOP=" + priceCOP + ", duration=" + duration);
   }
 
   let finalImage = "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&q=80&w=600";
