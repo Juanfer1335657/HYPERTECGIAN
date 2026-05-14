@@ -5,6 +5,7 @@ import { useCart } from "@/context/CartContext";
 import { Plus, Check, Clock, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useState, useMemo } from "react";
+import Image from "next/image";
 
 
 export default function ProductGrid({ products }: { products: Product[] }) {
@@ -65,11 +66,12 @@ function ProductCard({ product }: { product: Product }) {
   return (
     <div className="tech-card overflow-hidden flex flex-col h-full group bg-black/40 border-white/10">
       <div className="aspect-square w-full relative bg-slate-900 overflow-hidden">
-        <img 
+        <Image 
           src={product.image || "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&q=80&w=600"} 
           alt={product.title}
-          loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-110"
         />
         <div className="absolute top-4 left-4">
           <div className="px-3 py-1.5 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-white">
