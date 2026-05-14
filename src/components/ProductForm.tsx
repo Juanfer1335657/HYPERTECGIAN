@@ -153,7 +153,7 @@ export default function ProductForm({ product }: ProductFormProps) {
                   <input 
                     name="imageFile" 
                     type="file"
-                    accept="image/jpeg,image/png,image/webp"
+                    accept="image/jpeg,image/png,image/webp,image/svg+xml"
                     onChange={handleImageChange}
                     className="absolute inset-0 opacity-0 cursor-pointer z-10"
                   />

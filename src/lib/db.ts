@@ -35,8 +35,8 @@ export async function getProducts(): Promise<Product[]> {
       id: row.id as string,
       image: row.image as string,
       title: row.title as string,
-      priceUSD: row.price_usd as number,
-      priceCOP: row.price_cop as number,
+      priceUSD: Number(row.price_usd),
+      priceCOP: Number(row.price_cop),
       duration: row.duration as Duration,
       createdAt: row.created_at as string,
     }));

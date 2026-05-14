@@ -82,7 +82,7 @@ function ProductCard({ product }: { product: Product }) {
           <h3 className="font-bold text-white group-hover:text-blue-400 transition-colors">{product.title}</h3>
           <div className="flex flex-col">
             <span className="text-xl font-black text-white italic">${product.priceUSD.toLocaleString()} USD</span>
-            <span className="text-sm text-blue-400 font-bold tracking-tight">${product.priceCOP.toLocaleString()} COP</span>
+                            <span className="text-sm text-blue-400 font-bold tracking-tight">${Math.round(product.priceCOP).toLocaleString()} COP</span>
           </div>
         </div>
 

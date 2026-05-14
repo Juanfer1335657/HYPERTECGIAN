@@ -97,7 +97,7 @@ export default function InventoryCRUD({ products: initialProducts }: { products:
                       </span>
                     </td>
                     <td className="py-6 px-8 font-black text-slate-300 tabular-nums italic text-lg tracking-tighter">${p.priceUSD.toLocaleString()}</td>
-                    <td className="py-6 px-8 font-black text-blue-400/80 tabular-nums italic text-lg tracking-tighter">${p.priceCOP.toLocaleString()}</td>
+                    <td className="py-6 px-8 font-black text-blue-400/80 tabular-nums italic text-lg tracking-tighter">${Math.round(p.priceCOP).toLocaleString()}</td>
                     <td className="py-6 px-8 text-right">
                       <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">
                         <Link 
