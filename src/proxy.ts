@@ -2,7 +2,13 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function proxy(request: NextRequest) {
-  if (!request.nextUrl.pathname.startsWith("/admin")) {
+  const { pathname } = request.nextUrl;
+
+  if (pathname.startsWith("/_next/")) {
+    return NextResponse.next();
+  }
+
+  if (!pathname.startsWith("/admin")) {
     const response = NextResponse.next();
     response.cookies.set("admin-token", "", { maxAge: 0, path: "/" });
     return response;
@@ -12,5 +18,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|background.mp4).*)"],
+  matcher: ["/((?!favicon.ico|background.mp4).*)"],
 };
