@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { jwtVerify } from "jose";
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "super_secret_jwt_key_min_32_chars");
@@ -19,5 +19,15 @@ export async function verifyToken() {
 
 export async function getSession() {
   const payload = await verifyToken();
-  return payload !== null;
+  if (!payload) return false;
+
+  const headersList = await headers();
+  const referer = headersList.get("referer") || "";
+
+  // If user arrived from outside /admin, force re-login
+  if (referer && !referer.includes("/admin")) {
+    return false;
+  }
+
+  return true;
 }
