@@ -71,7 +71,7 @@ function ProductCard({ product }: { product: Product }) {
           alt={product.title}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-110"
+          className="object-contain transition-transform duration-500 group-hover:scale-110"
         />
         <div className="absolute top-4 left-4">
           <div className="px-3 py-1.5 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-white">

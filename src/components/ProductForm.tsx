@@ -129,7 +129,7 @@ export default function ProductForm({ product }: ProductFormProps) {
                     <>
                       <img 
                         src={previewImage} 
-                        className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-1000" 
+                        className="w-full h-full object-contain transition-transform group-hover:scale-110 duration-1000" 
                         alt="Vista previa" 
                       />
                       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-4 cursor-pointer">
