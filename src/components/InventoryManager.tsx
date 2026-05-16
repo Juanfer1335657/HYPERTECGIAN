@@ -99,7 +99,7 @@ export default function InventoryCRUD({ products: initialProducts }: { products:
                     <td className="py-6 px-8 font-black text-slate-300 tabular-nums italic text-lg tracking-tighter">${p.priceUSD.toLocaleString()}</td>
                     <td className="py-6 px-8 font-black text-blue-400/80 tabular-nums italic text-lg tracking-tighter">${Math.round(p.priceCOP).toLocaleString()}</td>
                     <td className="py-6 px-8 text-right">
-                      <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">
+                      <div className="flex items-center justify-end gap-3 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 translate-x-0 md:translate-x-4 md:group-hover:translate-x-0">
                         <Link 
                           href={`/admin/inventory/edit/${p.id}`}
                           className="p-3 bg-white/5 hover:bg-blue-500/20 text-slate-400 hover:text-blue-400 rounded-2xl transition-all border border-white/5 hover:border-blue-500/30 active:scale-90"
