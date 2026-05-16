@@ -113,8 +113,8 @@ export default function CartPage() {
                 <label className="text-xs font-black text-blue-400 uppercase tracking-widest">Método de Pago</label>
                 <div className="grid grid-cols-1 gap-2">
                   {[
-                    { id: "PayPal", icon: CreditCard, label: "PayPal / Tarjeta" },
-                    { id: "Nequi", icon: Wallet, label: "Nequi / Bancolombia" },
+                    { id: "PayPal", icon: CreditCard, label: "PayPal" },
+                    { id: "Nequi", icon: Wallet, label: "Nequi" },
                     { id: "Transferencia", icon: Landmark, label: "Transferencia Bancaria" }
                   ].map((method) => (
                     <button
